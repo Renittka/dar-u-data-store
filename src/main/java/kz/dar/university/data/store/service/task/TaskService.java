@@ -1,9 +1,13 @@
-package kz.dar.university.data.store.service;
+package kz.dar.university.data.store.service.task;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import kz.dar.university.data.store.model.TaskRequest;
 import kz.dar.university.data.store.model.TaskResponse;
 import kz.dar.university.data.store.repository.TaskEntity;
 import kz.dar.university.data.store.repository.TaskRepository;
+import kz.dar.university.data.store.service.send.SendService;
+import kz.dar.university.data.store.service.task.ITaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -22,23 +26,28 @@ public class TaskService implements ITaskService {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private SendService sendService;
+
     ModelMapper mapper = new ModelMapper();
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     {
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
     @Override
-    public List<TaskResponse> getAllTasks() {
+    public List<TaskResponse> getAllTasks(Pageable pageable) {
 
-        return taskRepository.getTaskEntitiesBy()
+        return taskRepository.getTaskEntitiesBy(pageable)
                 .stream().map(entity -> mapper.map(entity, TaskResponse.class))
                 .toList();
 
     }
 
     @Override
-    public TaskResponse createTask(TaskRequest task) {
+    public TaskResponse createTask(TaskRequest task) throws JsonProcessingException {
 
         log.info("Task request: " + task);
         task.setTaskId(UUID.randomUUID().toString());
@@ -47,8 +56,10 @@ public class TaskService implements ITaskService {
         log.info("Task entity: " + taskEntity);
         TaskEntity result = taskRepository.save(taskEntity);
 
+        sendService.send(objectMapper.writeValueAsString(task));
+
         log.info("Result: " + result);
-        return mapper.map(result, TaskResponse.class);
+        return mapper.map(task, TaskResponse.class);
 
     }
 

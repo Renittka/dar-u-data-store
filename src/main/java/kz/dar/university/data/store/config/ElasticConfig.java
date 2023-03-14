@@ -1,27 +1,18 @@
 //package kz.dar.university.data.store.config;
 //
-//import org.elasticsearch.client.RestClient;
-//import org.elasticsearch.client.RestHighLevelClient;
-//import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.data.elasticsearch.client.ClientConfiguration;
-//import org.springframework.data.elasticsearch.client.RestClients;
-//import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-//import org.springframework.data.elasticsearch.core.ElasticsearchRestTemplate;
+//import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 //
 //@Configuration
-//public class ElasticConfig {
+//public class ElasticConfig extends ElasticsearchConfiguration {
 //
-//    @Bean
-//    public RestHighLevelClient client() {
-//        ClientConfiguration clientConfiguration = ClientConfiguration
-//                .builder() .connectedTo("localhost:9200") .build();
-//        return RestClients.create(clientConfiguration).rest();
+//    @Override
+//    public ClientConfiguration clientConfiguration() {
+//        return ClientConfiguration.builder()
+//                .connectedTo("10.251.0.25:9092,10.251.1.25:9092,10.251.2.25:9092".split(","))
+//                .usingSsl()
+//                .build();
 //    }
-//    @Bean
-//    public ElasticsearchOperations elasticsearchTemplate() {
-//        return new ElasticsearchRestTemplate(client());
-//    }
-//
 //
 //}

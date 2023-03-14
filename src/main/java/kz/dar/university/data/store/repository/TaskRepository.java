@@ -16,6 +16,6 @@ public interface TaskRepository extends ElasticsearchRepository<TaskEntity, Stri
 
     void deleteTaskEntityByTaskId(String taskId);
 
-    List<TaskEntity> getTaskEntitiesBy();
+    List<TaskEntity> getTaskEntitiesBy(Pageable pageable);
 
 }

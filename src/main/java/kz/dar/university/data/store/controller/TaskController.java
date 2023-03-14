@@ -1,11 +1,12 @@
 package kz.dar.university.data.store.controller;
 
-import kz.dar.university.data.store.model.TaskModel;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import kz.dar.university.data.store.model.TaskRequest;
 import kz.dar.university.data.store.model.TaskResponse;
-import kz.dar.university.data.store.service.ITaskService;
+import kz.dar.university.data.store.service.task.ITaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class TaskController {
         return "data-store is working";
     }
 
+
     @GetMapping("/{taskId}")
     public TaskResponse getTaskByTaskId(@PathVariable String taskId) {
 
@@ -31,21 +33,21 @@ public class TaskController {
     }
 
     @GetMapping("/all")
-    public List<TaskResponse> getAllTasks() {
+    public List<TaskResponse> getAllTasks(Pageable pageable) {
 
-        return taskService.getAllTasks();
+        return taskService.getAllTasks(pageable);
 
     }
 
     @GetMapping("/initiator/{initiatorId}")
-    public List<TaskResponse> getAllTasksByInitiatorId(@PathVariable String initiatorId) {
+    public List<TaskResponse> getAllTasksByInitiatorId(@PathVariable String initiatorId, Pageable pageable) {
 
-        return taskService.getTasksByInitiatorId(initiatorId, PageRequest.of());
+        return taskService.getTasksByInitiatorId(initiatorId, pageable);
 
     }
 
     @PostMapping
-    public TaskResponse createTask(@RequestBody TaskRequest task) {
+    public TaskResponse createTask(@RequestBody TaskRequest task) throws JsonProcessingException {
 
         return taskService.createTask(task);
 
